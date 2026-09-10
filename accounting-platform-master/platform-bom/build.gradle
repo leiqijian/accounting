@@ -1,0 +1,117 @@
+plugins {
+    id "java-platform"
+    id "maven-publish"
+    id "io.spring.dependency-management" version "1.1.0"
+}
+
+group PROJECT_GROUP
+version PROJECT_VERSION
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:2.6.4"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2021.0.1"
+        mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:2021.0.1.0"
+        mavenBom "software.amazon.awssdk:bom:2.20.5"
+    }
+
+    dependencies {
+        /* Authentication / Encryption */
+        dependency "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4"
+        dependency "org.jasypt:jasypt:1.9.3"
+
+        /* DB */
+        dependency "mysql:mysql-connector-java:8.0.27"
+        dependency "com.alibaba:druid-spring-boot-starter:1.2.8"
+        dependency "org.flywaydb:flyway-core:8.2.0"
+        dependency "com.github.wenhao:jpa-spec:3.2.4"
+        dependency "com.querydsl:querydsl-core:5.0.0"
+        dependency "com.querydsl:querydsl-jpa:5.0.0"
+        dependency "com.querydsl:querydsl-apt:5.0.0"
+        dependency "com.cosium.spring.data:spring-data-jpa-entity-graph:2.6.0"
+        dependency "com.vladmihalcea:hibernate-types-52:2.16.2"
+
+        /* Log */
+        dependency "org.slf4j:slf4j-log4j12:1.7.32"
+
+        /* Commons */
+        dependency "commons-io:commons-io:2.17.0"
+        dependency "commons-lang:commons-lang:2.6"
+        dependency "commons-pool:commons-pool:1.6"
+        dependency "org.apache.commons:commons-exec:1.3"
+        dependency "org.apache.commons:commons-lang3:3.12.0"
+        dependency "commons-beanutils:commons-beanutils:1.9.4"
+        dependency "commons-collections:commons-collections:3.2.2"
+        dependency "org.hibernate.validator:hibernate-validator:6.0.7.Final"
+        dependency "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2"
+        dependency "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.2"
+        dependency "com.pivovarit:throwing-function:1.5.1"
+        dependency "io.netty:netty-all:4.1.74.Final"
+
+        /* Mapstruct */
+        dependency "org.mapstruct:mapstruct-jdk8:1.5.2.Final"
+        dependency "org.mapstruct:mapstruct:1.5.2.Final"
+        dependency "org.mapstruct:mapstruct-processor:1.5.2.Final"
+
+        /* AWS */
+        dependency "com.liquido.starter:sqs-starter:0.1.1"
+
+        /* Test */
+        dependency "org.testng:testng:7.0.0"
+        dependency "com.aventstack:extentreports:3.1.5"
+        dependency "com.relevantcodes:extentreports:2.41.2"
+        dependency "com.vimalselvam:testng-extentsreport:1.3.1"
+
+        /* Other */
+        dependency "com.thoughtworks.xstream:xstream:1.4.15"
+        dependency "com.thoughtworks.paranamer:paranamer:2.8"
+        dependency "com.maxmind.geoip2:geoip2:3.0.1"
+        dependency "org.apache.tika:tika-core:3.0.0"
+
+        /*Yauaa Analyze browser information*/
+        dependency "nl.basjes.parse.useragent:yauaa:6.12"
+
+
+        dependency "joda-time:joda-time:2.10.9"
+        dependency "com.google.guava:guava:29.0-jre"
+
+        /* excel export */
+        dependency "com.alibaba:easyexcel:3.1.0"
+        dependency "org.apache.poi:poi:4.1.2"
+        dependency "org.apache.poi:poi-ooxml:4.1.2"
+    }
+}
+
+dependencies {
+}
+
+configurations {
+    javaPlatform.allowDependencies()
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+        maven {
+            url PROJECT_VERSION.endsWith("-SNAPSHOT") ? NEW_MAVEN_URL_SNAPSHOTS : NEW_MAVEN_URL_RELEASES
+            allowInsecureProtocol true
+            credentials {
+                username = System.getenv("MAVEN_USERNAME") ?: ""
+                password = System.getenv("MAVEN_PASSWORD") ?: ""
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = PROJECT_GROUP
+            artifactId = PROJECT_ARTIFACT_ID
+            version = PROJECT_VERSION
+            from components.javaPlatform
+        }
+    }
+}

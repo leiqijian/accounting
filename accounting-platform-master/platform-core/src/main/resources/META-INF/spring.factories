@@ -1,0 +1,10 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.liquido.core.configuration.CommonConfiguration,\
+com.liquido.core.configuration.JasyptConfiguration,\
+com.liquido.core.configuration.CustomizeRedisConfiguration,\
+com.liquido.core.configuration.CustomizeWebMvcConfiguration,\
+com.liquido.core.configuration.CustomizeFeignConfiguration,\
+com.liquido.core.configuration.QueryDslJpaFactoryConfiguration,\
+com.liquido.core.configuration.CustomizeEditorConfiguration,\
+com.liquido.core.configuration.SecretManagersConfiguration,\
+com.liquido.core.configuration.InitAesKeyStarter

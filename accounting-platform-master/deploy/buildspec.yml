@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - apt-get update -y
+      - apt-get install -y jq
+  pre_build:
+    commands:
+      - echo Getting Maven credentials from Secrets Manager...
+      - SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:ap-southeast-1:398186320513:secret:nexus/account/readonly-GvaYLc --query SecretString --output text)
+      - MAVEN_USERNAME=$(echo $SECRET_STRING | jq -r '.username')
+      - MAVEN_PASSWORD=$(echo $SECRET_STRING | jq -r '.password')
+      - export MAVEN_USERNAME
+      - export MAVEN_PASSWORD
+  build:
+    commands:
+      - ./gradlew publishMavenPublicationToMavenRepository

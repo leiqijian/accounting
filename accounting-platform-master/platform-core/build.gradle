@@ -1,0 +1,169 @@
+buildscript {
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.1.0"
+    }
+}
+
+plugins {
+    id "java-library"
+    id "maven-publish"
+    id "io.spring.dependency-management" version "1.1.0"
+}
+
+group PROJECT_GROUP
+version PROJECT_VERSION
+sourceCompatibility = PROJECT_JDK
+targetCompatibility = PROJECT_JDK
+apply plugin: "io.spring.dependency-management"
+
+jar {
+    enabled = true
+}
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+tasks.withType(Javadoc) {
+    options.encoding = "UTF-8"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    maven {
+        url NEW_MAVEN_URL_RELEASES
+        allowInsecureProtocol true
+        credentials {
+            username = System.getenv("MAVEN_USERNAME") ?: ""
+            password = System.getenv("MAVEN_PASSWORD") ?: ""
+        }
+    }
+    maven {
+        url NEW_MAVEN_URL_SNAPSHOTS
+        allowInsecureProtocol true
+        credentials {
+            username = System.getenv("MAVEN_USERNAME") ?: ""
+            password = System.getenv("MAVEN_PASSWORD") ?: ""
+        }
+    }
+}
+
+/**我们生成的自定义 maven-bom*/
+dependencyManagement {
+    imports {
+        mavenBom "com.liquido:platform-bom:1.2.4-SNAPSHOT"
+    }
+}
+
+dependencies {
+    /* Spring */
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    compileOnly "org.springframework.boot:spring-boot-starter-security"
+    compileOnly "org.springframework.boot:spring-boot-starter-amqp"
+
+    /* Spring Cloud */
+    compileOnly "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+    /* JPA */
+    compileOnly "com.querydsl:querydsl-jpa"
+    compileOnly "org.springframework.boot:spring-boot-starter-data-jpa"
+
+    /* Valid */
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.hibernate.validator:hibernate-validator"
+
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+
+    /* Jasypt:encrypt */
+    implementation "org.jasypt:jasypt"
+    implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter"
+
+    /* AWS 2.x */
+    implementation "software.amazon.awssdk:sqs"
+    implementation "software.amazon.awssdk:secretsmanager"
+    implementation "software.amazon.awssdk:sts"
+    implementation "com.liquido.starter:sqs-starter"
+
+    /* Common */
+    implementation "commons-io:commons-io"
+    implementation "commons-lang:commons-lang"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "commons-collections:commons-collections"
+    implementation "commons-pool:commons-pool"
+    implementation "commons-beanutils:commons-beanutils"
+    implementation "nl.basjes.parse.useragent:yauaa"
+    implementation "com.thoughtworks.paranamer:paranamer"
+    implementation "com.google.guava:guava"
+    implementation "com.squareup.okhttp3:okhttp"
+    implementation "joda-time:joda-time"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+    implementation "com.vladmihalcea:hibernate-types-52"
+    implementation "io.netty:netty-all"
+    implementation "org.apache.tika:tika-core"
+
+    /* Mapstruct */
+    implementation "org.mapstruct:mapstruct-jdk8"
+    implementation "org.mapstruct:mapstruct"
+    implementation "org.mapstruct:mapstruct-processor"
+    annotationProcessor("org.mapstruct:mapstruct-processor")
+    testAnnotationProcessor("org.mapstruct:mapstruct-processor")
+
+    /* Lombok */
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    /*Test*/
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    compileOnly "org.testng:testng"
+    compileOnly "com.aventstack:extentreports"
+    compileOnly "com.relevantcodes:extentreports"
+    compileOnly "com.vimalselvam:testng-extentsreport"
+    testAnnotationProcessor("org.testng:testng")
+    testAnnotationProcessor("com.aventstack:extentreports")
+    testAnnotationProcessor("com.relevantcodes:extentreports")
+    testAnnotationProcessor("com.vimalselvam:testng-extentsreport")
+
+    /* EasyExcel */
+    implementation("com.alibaba:easyexcel") {
+        exclude group: "org.apache.poi", module: "poi-ooxml-schemas"
+    }
+    implementation "org.apache.poi:poi"
+    implementation "org.apache.poi:poi-ooxml"
+}
+
+
+publishing {
+    repositories {
+        mavenLocal()
+        maven {
+            url PROJECT_VERSION.endsWith('-SNAPSHOT') ? NEW_MAVEN_URL_SNAPSHOTS : NEW_MAVEN_URL_RELEASES
+            allowInsecureProtocol true
+            credentials {
+                username = System.getenv("MAVEN_USERNAME") ?: ""
+                password = System.getenv("MAVEN_PASSWORD") ?: ""
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId = PROJECT_GROUP
+            artifactId = PROJECT_ARTIFACT_ID
+            version = PROJECT_VERSION
+            artifact jar
+        }
+    }
+}
