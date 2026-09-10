@@ -1,0 +1,14 @@
+group = PROJECT_GROUP
+version = PROJECT_VERSION
+description = PROJECT_ARTIFACT_ID
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+dependencies {
+    /* Feign */
+    compileOnly "org.springframework.cloud:spring-cloud-starter-openfeign"
+    compileOnly "org.springframework.cloud:spring-cloud-starter-loadbalancer"
+}
