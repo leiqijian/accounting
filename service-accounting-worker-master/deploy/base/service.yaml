@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: NAMESPACE
+  name: service-accounting-service-worker
+spec:
+  ports:
+    - port: 9001
+      targetPort: 9001
+      protocol: TCP
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: app-accounting-service-worker

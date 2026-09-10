@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="产品微服务模块" thread-count="1" parallel="false">
+    <!--<test name="这些是测试模块">-->
+    <!--<classes>-->
+    <!--<class name="com.alliance.product.TestNGDemo">-->
+    <!--<methods>-->
+    <!--<include name="test1"/>-->
+    <!--<include name="test2"/>-->
+    <!--<include name="test3"/>-->
+    <!--<include name="logDemo"/>-->
+    <!--</methods>-->
+    <!--</class>-->
+    <!--</classes>-->
+    <!--</test>-->
+
+    <test name="产品信息管理测试" preserve-order="true">
+        <classes>
+            <class name="com.liquido.worker.service.TaskTransactionServiceTest"/>
+        </classes>
+    </test>
+    <listeners>
+        <listener class-name="com.liquido.test.listener.ExtentTestNgReporterListener"/>
+    </listeners>
+</suite>

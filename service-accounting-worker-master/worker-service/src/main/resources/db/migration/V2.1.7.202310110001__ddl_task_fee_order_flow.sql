@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS `service_accounting_worker`.`task_fee_order_flow`;

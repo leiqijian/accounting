@@ -1,0 +1,27 @@
+CREATE TABLE service_accounting_worker.card_tokenization
+(
+    id                             bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key Id',
+    token_id                       varchar(128) NOT NULL COMMENT 'token id',
+    merchant_code                  varchar(128) NOT NULL COMMENT 'merchant code',
+    tokenization_created_time      timestamp NULL DEFAULT NULL COMMENT 'Tokenization created time',
+    tokenization_created_timestamp int NULL DEFAULT NULL COMMENT 'Tokenization created timestamp',
+    country_code                   varchar(2)   NOT NULL COMMENT 'CountryCodeEnum',
+    bin                            varchar(32)           DEFAULT NULL COMMENT 'token info displayed card info bin',
+    brand                          varchar(32)           DEFAULT NULL COMMENT 'token info displayed card info brand',
+    last_4_digit                   varchar(4)            DEFAULT NULL COMMENT 'token info displayed card info last 4 digit number',
+    card_holder_name               varchar(128)          DEFAULT NULL COMMENT 'token info displayed card info card holder name',
+    expiration_year                varchar(4)            DEFAULT NULL COMMENT 'token expiration year',
+    expiration_month               varchar(2)            DEFAULT NULL COMMENT 'token expiration month',
+    vendor                         varchar(32)           DEFAULT NULL COMMENT 'vendor name',
+    token_info                     json                  DEFAULT NULL COMMENT 'token info',
+    event_timestamp                int          NOT NULL COMMENT 'event timestamp (second)',
+    created_time                   datetime              DEFAULT NULL,
+    updated_time                   datetime              DEFAULT NULL,
+    version                        int          NOT NULL DEFAULT '0' COMMENT 'optimistic locking 0:normal, 1:locked',
+    del_flag                       tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-normal，1-delete',
+    remark                         varchar(200)          DEFAULT '' COMMENT 'remark',
+    PRIMARY KEY (id) USING BTREE,
+    UNIQUE KEY idx_token_id (merchant_code,token_id) USING BTREE,
+    INDEX                          idx_merchant_code (merchant_code) USING BTREE,
+    INDEX                          idx_event_timestamp (event_timestamp) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='card_tokenization';

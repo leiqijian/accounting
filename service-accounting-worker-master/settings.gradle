@@ -1,0 +1,4 @@
+rootProject.name = "service-accounting-worker"
+include "worker-client"
+include "worker-service"
+

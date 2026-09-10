@@ -1,0 +1,1 @@
+DROP TABLE service_accounting_worker.daily_exchange_rate;

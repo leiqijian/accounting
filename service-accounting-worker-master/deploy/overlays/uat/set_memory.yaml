@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: NAMESPACE
+  name: accounting-service-worker-deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: app-accounting-service-worker
+        resources:
+          limits:
+            memory: "2Gi"
+          requests:
+            memory: "1Gi"
