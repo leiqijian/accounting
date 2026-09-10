@@ -1,0 +1,2 @@
+ALTER TABLE `service_accounting_statement`.`account`
+    ADD COLUMN `latest_daily_extractable_balance` decimal(26, 0) NOT NULL DEFAULT 0 COMMENT 'latest daily extractable balance, unit:cent' AFTER `sub_total_count`;

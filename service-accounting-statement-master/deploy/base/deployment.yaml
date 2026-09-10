@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: NAMESPACE
+  name: accounting-service-statement-deployment
+  annotations:
+    kubernetes.io/change-cause: "latest version"
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app-accounting-service-statement
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app-accounting-service-statement
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                        - app-accounting-service-statement
+                topologyKey: "kubernetes.io/hostname"
+      serviceAccountName: s3-sqs-access-sa
+      containers:
+        - name: app-accounting-service-statement
+          image: 398186320513.dkr.ecr.ap-southeast-1.amazonaws.com/liquido-service-accounting-statement:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9003
+          env:
+            - name: LIQUIDO_DISCOVER
+              valueFrom:
+                configMapKeyRef:
+                  name: accounting-cm
+                  key: nacos.servers
+            - name: LIQUIDO_SENTINEL
+              valueFrom:
+                configMapKeyRef:
+                  name: accounting-cm
+                  key: accounting.sentiel
+            - name: ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: accounting-cm
+                  key: accounting.env
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9003
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9003
+            failureThreshold: 3
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 9003
+            failureThreshold: 30
+            periodSeconds: 10

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div style="margin: 20px 10px; font-family: 'Microsoft YaHei', 'PingFangSC-Medium', 'PingFang SC', 'sans-serif'; padding-bottom: 50px;">
+    <div style="display: inline-block; box-sizing: border-box; background-color: white;">
+        <div style="width: 100%; position: relative; display: flex; background: -webkit-linear-gradient(left, #1565C0, #419EF4);">
+            <div style="width: 54px; height: 54px; margin-left: 15px; margin-top: 10px; background-image: url('https://cdn.hengqin.runworld.cn/lqlogo.png'); background-position: center; background-repeat: no-repeat; background-size: contain;"></div>
+            <div style="font-size: 12px; margin-top: 10px;">
+                <p style="text-align: left; font-size: 26px; font-weight: bold; color: white; margin: 0 0 5px 15px;">
+                    MXNLIQUIDO, S.A. DE C.V.
+                </p>
+                <p style="font-size: 12px; color: #7FB3E9; margin-bottom: 5px; padding-bottom: 10px; margin-left: 15px;">
+                    Campeche 429 6b, Hipódromo Condesa, Cuauhtemoc, Ciudad de Mexico, 6170 México
+                </p>
+            </div>
+        </div>
+
+        <table style="width: 100%; background-color: #FFFFFF; border-collapse: collapse; margin: auto; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+            <tr>
+                <th colspan="4" style="text-align: center; line-height: 80px; font-size: 24px; font-weight: bold; color: #000000; white-space: nowrap;">
+                    FUNDS COLLECTION STATEMENT
+                </th>
+            </tr>
+            <tr>
+                <th style="min-width: 150px; color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    TRANSACTION DATE
+                </th>
+                <td style="min-width: 150px; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <span>${transactionDate}</span>
+                </td>
+                <th style="min-width: 150px; color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    REFERENCE NUMBER
+                </th>
+                <td style="min-width: 150px; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <span>${referenceNumber}</span>
+                </td>
+            </tr>
+            <tr>
+                <th style="color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    AMOUNT
+                </th>
+                <td style="padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <label>Mex$</label>
+                    <span>${amount}</span>
+                </td>
+                <th style="color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    FEE
+                </th>
+                <td style="padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <label>Mex$</label>
+                    <span>${totalFeeAmount}</span>
+                </td>
+            </tr>
+            <tr>
+                <th style="color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    TOTAL PAYOUT
+                </th>
+                <td style="padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <label>Mex$</label>
+                    <span>${netAmount}</span>
+                </td>
+                <th style="color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    STATUS
+                </th>
+                <td style="padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <span>${transferStatus}</span>
+                </td>
+            </tr>
+            <tr>
+                <th style="color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    BENEFICIARY NAME
+                </th>
+                <td style="padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <span>${targetName}</span>
+                </td>
+                <th style="color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    BENEFICIARY ACCOUNT
+                </th>
+                <td style="padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    <span>${targetBankAccountId}</span>
+                </td>
+            </tr>
+            <tr>
+                <th style="color: #4081CC; background-color: #F3F8FF; padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;">
+                    COMMENT
+                </th>
+                <td colspan="3"
+                    style="padding: 14px; font-size: 14px; border: 1px solid #DAE7F8;"></td>
+            </tr>
+        </table>
+        <div style="width: 100%; text-align: center; bottom: 0; padding-top: 20px; padding-bottom: 20px; color: #3F6C9B; font-size: 12px; background-color: #DAE7F8;">
+            <a>© 2021, Liquido, Inc. All rights reserved</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

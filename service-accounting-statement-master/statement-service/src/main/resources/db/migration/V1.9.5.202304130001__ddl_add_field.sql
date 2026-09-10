@@ -1,0 +1,2 @@
+ALTER TABLE `service_accounting_statement`.`transaction_cost`
+    ADD COLUMN `business_type` varchar(32) NOT NULL DEFAULT 'TRANSACTION' COMMENT 'Business type: TRANSACTION, TOPUP, REFUND, TRANSFER_OUT, EXCHANGE, ADJUSTMENT' AFTER `account_id`;

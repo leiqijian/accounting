@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+
+    <!-- source is the properties key, com.liquido.logger.file_path parameter information,can config in application.properties or nacos-->
+    <springProperty scope="context" name="app.name" source="spring.application.name"/>
+    <springProperty scope="context" name="app.name" source="spring.application.name"/>
+    <springProperty scope="context" name="logLevelRoot" source="log.level.root"
+                    defaultValue="INFO"/>
+    <springProperty scope="context" name="logPath" source="com.liquido.logger.file_path"
+                    defaultValue="/log/${app.name}"/>
+    <springProperty scope="context" name="fileName" source="com.liquido.logger.file_name"
+                    defaultValue="log"/>
+
+    <!--Log character maximum print length -->
+    <springProperty scope="context" name="lineLimit" source="com.liquido.logger.line_limit"
+                    defaultValue="4096"/>
+    <springProperty scope="context" name="maxFileSize" source="com.liquido.logger.max_file_size"
+                    defaultValue="2GB"/>
+    <conversionRule conversionWord="msg"
+                    converterClass="com.liquido.core.common.logger.LoggerMessageConverter"/>
+
+    <!-- logPattern -->
+    <springProfile name="local,dev,test">
+        <property name="logPattern"
+                  value="%d{yy-MM-dd HH:mm:ss.SSS}|%-5level|%thread|%X{traceId}|%X{queueId}|%X{url}|%file %M:%line|%.-${lineLimit}msg %ex %n"/>
+    </springProfile>
+
+    <springProfile name="prod">
+        <property name="logPattern"
+                  value="%d{yy-MM-dd HH:mm:ss.SSS}|%-5level|%thread|%X{traceId}|%X{queueId}|%X{url}|%file %M:%line|%.-${lineLimit}msg %ex %n"/>
+    </springProfile>
+
+    <!-- Output log to console: ConsoleAppender -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${logPattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- Output log to file, One file per day -->
+    <appender name="dailyRollingFileAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- <prudent>true</prudent> -->
+        <File>${logPath}/${fileName}.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover 200M write a file -->
+            <FileNamePattern>${logPath}/${fileName}-%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${maxFileSize}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${logPattern}</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="asyncCommonAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="dailyRollingFileAppender"/>
+    </appender>
+
+    <!-- Local/Dev/Test Environmental configuration -->
+    <springProfile name="local,dev,test">
+        <root level="${logLevelRoot}">
+            <appender-ref ref="console"/>
+            <appender-ref ref="dailyRollingFileAppender"/>
+        </root>
+    </springProfile>
+
+    <!-- Prod Environmental configuration -->
+    <springProfile name="prod">
+        <root level="${logLevelRoot}">
+            <appender-ref ref="console"/>
+            <appender-ref ref="asyncCommonAppender"/>
+        </root>
+    </springProfile>
+</configuration>

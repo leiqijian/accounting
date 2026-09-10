@@ -1,0 +1,3 @@
+ALTER TABLE `service_accounting_statement`.`global_statement`
+    CHANGE COLUMN `trade_type` `target_type` varchar(8) NOT NULL DEFAULT '' COMMENT 'target_type: SELF:self account, SUB:sub_account' AFTER `business_type`,
+    MODIFY COLUMN `sub_account_id` bigint UNSIGNED NOT NULL DEFAULT 0 COMMENT 'topup or transfer_out to target subAccountId, when target_type=SELF then account_id=0' AFTER `global_account_id`;

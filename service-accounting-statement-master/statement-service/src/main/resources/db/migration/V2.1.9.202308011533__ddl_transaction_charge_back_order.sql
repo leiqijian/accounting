@@ -1,0 +1,25 @@
+CREATE TABLE `service_accounting_statement`.`transaction_charge_back_order`
+(
+    `id`                    bigint UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'primary key Id',
+    `transaction_id`        bigint         NOT NULL COMMENT 'fk tack_id',
+    `unique_id`             varchar(128)   NOT NULL COMMENT 'from global transaction system uniqueId, reference task_fee_calculation.unique_id',
+    `merchant_id`           bigint         NOT NULL COMMENT 'fk',
+    `account_id`            bigint         NOT NULL COMMENT 'account id',
+    `transaction_type_code` varchar(32)    NOT NULL COMMENT 'TransactionTypeCodeEnum: PAY_IN/PAY_OUT/MARKET_PLACE_ORDERS',
+    `product_code`          varchar(32)    NOT NULL COMMENT 'ProductCodeEnum: SPEI/TED/PIX/CREDIT_CARD/ELO_CREDIT_CARD/BOLETO/OXXO/GIFTCARD/TOPUP/UTILITY',
+    `amount`                decimal(26, 0) NOT NULL DEFAULT 0 COMMENT 'transaction amount, unit: cent',
+    `currency`              varchar(3)     NOT NULL COMMENT 'transaction currency',
+    `chargeback_time`       datetime       NOT NULL COMMENT 'UTC+0',
+    `status`                varchar(32)    NOT NULL COMMENT 'status/(pending/processing/successful/failed)',
+    `reason`                varchar(400) NULL COMMENT 'reason',
+    `refund_results`        varchar(400) NULL COMMENT 'refund results',
+    `created_time`          datetime NULL DEFAULT NULL,
+    `updated_time`          datetime NULL DEFAULT NULL,
+    `created_by`            bigint NULL DEFAULT 0,
+    `updated_by`            bigint NULL DEFAULT 0,
+    `version`               int NULL DEFAULT 1 COMMENT 'optimistic locking',
+    `del_flag`              tinyint        NOT NULL DEFAULT 0 COMMENT '0-normal，1-delete',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `udx_unique_id`(`unique_id`) USING BTREE,
+    INDEX                   `idx_account_created_time`(`account_id`, `created_time`) USING BTREE
+)ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'transaction_charge_back_order' ROW_FORMAT = DYNAMIC;

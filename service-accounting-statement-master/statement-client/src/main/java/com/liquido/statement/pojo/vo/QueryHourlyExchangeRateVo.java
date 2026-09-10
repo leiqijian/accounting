@@ -1,0 +1,33 @@
+package com.liquido.statement.pojo.vo;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import javax.persistence.Convert;
+import javax.validation.constraints.NotNull;
+
+import com.liquido.base.enums.CurrencyEnum;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class QueryHourlyExchangeRateVo implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @NotNull
+    @Convert(converter = CurrencyEnum.Convert.class)
+    private CurrencyEnum sourceCurrency;
+
+    @NotNull
+    @Convert(converter = CurrencyEnum.Convert.class)
+    private CurrencyEnum targetCurrency;
+
+    @NotNull
+    private LocalDateTime exchangeTime;
+
+}

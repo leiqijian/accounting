@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - echo Installing dependencies...
+      - apt-get update -y
+      - apt-get install -y jq
+  pre_build:
+    commands:
+      - aws --version
+      - aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - echo Getting Maven credentials from Secrets Manager...
+      - SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:ap-southeast-1:398186320513:secret:nexus/account/readonly-GvaYLc --query SecretString --output text)
+      - MAVEN_USERNAME=$(echo $SECRET_STRING | jq -r '.username')
+      - MAVEN_PASSWORD=$(echo $SECRET_STRING | jq -r '.password')
+      - export MAVEN_USERNAME
+      - export MAVEN_PASSWORD
+  build:
+    commands:
+      - ./gradlew buildDocker -PNAME=$IMAGE_REPO_NAME -PVERSION=$CODEBUILD_SOURCE_VERSION -PAWS_ACCOUNT_ID=$AWS_ACCOUNT_ID -PAWS_REGION=$AWS_REGION
+      #      - ./mvnw package
+      #      - docker build -t $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION .
+      - docker tag $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
+  post_build:
+    commands:
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
+      - sed -i -e "s/NEWTAGNAME/$CODEBUILD_SOURCE_VERSION/g" deploy/overlays/$PENV/kustomization.yaml
+      - sed -i -e "s/AWS_ACCOUNT_ID/$AWS_ACCOUNT_ID/g"  deploy/overlays/$PENV/kustomization.yaml
+      - sed -i -e "s/AWS_REGION/$AWS_REGION/g"  deploy/overlays/$PENV/kustomization.yaml
+      - kubectl apply -k deploy/overlays/$PENV
+
+cache:
+  paths:
+    - '/root/.gradle/**/*'

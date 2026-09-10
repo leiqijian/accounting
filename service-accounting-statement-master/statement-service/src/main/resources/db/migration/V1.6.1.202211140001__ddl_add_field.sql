@@ -1,0 +1,2 @@
+ALTER TABLE `service_accounting_statement`.`account`
+    ADD COLUMN `frozen_amount` decimal(26, 0) unsigned DEFAULT '0' COMMENT 'Frozen amount in extractable balance, unit:cent' AFTER `extractable_balance`;
