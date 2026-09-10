@@ -1,0 +1,125 @@
+package com.liquido.worker.pojo.dto;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import javax.persistence.Convert;
+
+import com.liquido.base.enums.CountryCodeEnum;
+import com.liquido.base.enums.CurrencyEnum;
+import com.liquido.base.enums.DataSyncStatusEnum;
+import com.liquido.base.enums.ProductCodeEnum;
+import com.liquido.base.enums.TransactionTypeCodeEnum;
+import com.liquido.core.common.logger.SensitiveField;
+import com.liquido.core.common.logger.SensitiveType;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@SuppressWarnings("PMD.TooManyFields")
+public class PageShoplazzaDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+
+    /**
+     * link id
+     */
+    private String linkId;
+
+    /**
+     * order id
+     */
+    private String orderId;
+
+    /**
+     * link
+     */
+    private String link;
+
+    /**
+     * shop domain
+     */
+    private String shopDomain;
+
+    private String merchantCode;
+
+    @Convert(converter = CountryCodeEnum.Convert.class)
+    private CountryCodeEnum countryCode;
+
+    @Convert(converter = TransactionTypeCodeEnum.Convert.class)
+    private TransactionTypeCodeEnum transactionTypeCode;
+
+    @Convert(converter = ProductCodeEnum.Convert.class)
+    private ProductCodeEnum productCode;
+
+    /**
+     * save integer type, unit：cent
+     */
+    private BigDecimal amount;
+
+    @Convert(converter = CurrencyEnum.Convert.class)
+    private CurrencyEnum currency;
+
+    @Convert(converter = DataSyncStatusEnum.Convert.class)
+    private DataSyncStatusEnum paymentStatus;
+
+    private String settledUniqueId;
+
+    /**
+     * timestamp UTC+0
+     */
+    private LocalDateTime submitTime;
+
+    /**
+     * timestamp UTC+0
+     */
+    private Long submitTimestamp;
+
+    /**
+     * timestamp UTC+0
+     */
+    private LocalDateTime transactionTime;
+
+    /**
+     * timestamp UTC+0
+     */
+    private Long transactionTimestamp;
+
+    private Boolean refunded;
+
+    private String refundedUniqueId;
+
+    /**
+     * timestamp UTC+0
+     */
+    private LocalDateTime refundTime;
+
+    /**
+     * timestamp UTC+0
+     */
+    private Long refundTimestamp;
+
+    /**
+     * timestamp UTC+0
+     */
+    private Long eventTimestamp;
+
+    @SensitiveField(SensitiveType.EMAIL)
+    private String userEmail;
+
+    @SensitiveField(SensitiveType.MOBILE)
+    private String userPhone;
+
+    private LocalDateTime createdTime;
+
+    private LocalDateTime updatedTime;
+
+}
