@@ -1,0 +1,122 @@
+group PROJECT_GROUP
+version PROJECT_VERSION
+description = PROJECT_ARTIFACT_ID
+
+dependencies {
+    /* Client */
+    implementation(project(":base-client"))
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    /* DB */
+    implementation "mysql:mysql-connector-java"
+    implementation "com.alibaba:druid-spring-boot-starter"
+    implementation "org.flywaydb:flyway-core"
+
+    /* Email */
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    /* JPA expand */
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    annotationProcessor "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "com.github.wenhao:jpa-spec"
+    implementation "com.cosium.spring.data:spring-data-jpa-entity-graph"
+    implementation "com.querydsl:querydsl-jpa"
+    annotationProcessor "com.querydsl:querydsl-apt"
+    implementation "com.vladmihalcea:hibernate-types-52"
+
+    /* Redis */
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+
+    /* AWS */
+    implementation "software.amazon.awssdk:secretsmanager"
+    implementation "software.amazon.awssdk:sts"
+
+    /* LOG/Actuator */
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+
+    /* Discovery-Nacos */
+    implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery"
+    implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-bootstrap"
+
+    /* Feign */
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+    implementation "org.springframework.cloud:spring-cloud-starter-loadbalancer"
+
+    /* Sentinel */
+    implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel"
+
+    /* Test */
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    /* TestNG */
+    // testImplementation "org.testng:testng"
+    // testImplementation "com.vimalselvam:testng-extentsreport"
+
+    /* Common framework */
+    implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter"
+    implementation "org.jasypt:jasypt"
+    implementation "commons-io:commons-io"
+    implementation "commons-lang:commons-lang"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "org.apache.commons:commons-text:1.10.0"
+    implementation "commons-collections:commons-collections"
+    implementation "commons-pool:commons-pool"
+    implementation "commons-beanutils:commons-beanutils"
+    implementation "com.google.guava:guava"
+    implementation "com.thoughtworks.paranamer:paranamer"
+    implementation "com.squareup.okhttp3:okhttp"
+    implementation "joda-time:joda-time"
+    implementation "nl.basjes.parse.useragent:yauaa"
+
+    /* Mapstruct */
+    implementation "org.mapstruct:mapstruct-jdk8:1.5.2.Final"
+    implementation "org.mapstruct:mapstruct:1.5.2.Final"
+    implementation "org.mapstruct:mapstruct-processor:1.5.2.Final"
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.2.Final")
+    testAnnotationProcessor("org.mapstruct:mapstruct-processor:1.5.2.Final")
+
+    /*implementation "com.liquido:accounting-platform-plugin-command-bus:1.0.0-SNAPSHOT"*/
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [
+                    "src/main/java",
+                    "$buildDir/generated/sources/annotationProcessor/java/main"
+            ]
+        }
+    }
+}
+
+compileJava {
+    dependsOn "generateQueryDSL"
+}
+
+task generateQueryDSL(type: JavaCompile) {
+    source = sourceSets.main.java.srcDirs
+    classpath = sourceSets.main.compileClasspath
+    getDestinationDirectory().set(file("$buildDir/generated/sources/annotationProcessor/java/main"))
+    options.annotationProcessorPath = configurations.annotationProcessor
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor",
+            "com.querydsl.apt.jpa.JPAAnnotationProcessor",
+            "-Aquerydsl.generatedAnnotationClass=com.querydsl.core.annotations.Generated"
+    ]
+}
+
+tasks.named("checkstyleMain") {
+    exclude "**/Q**.java", "**/JPAQueryFactory.java"
+}
+
+tasks.named("pmdMain") {
+    exclude "**/Q**.java"
+}
+
+test {
+    useJUnitPlatform()
+}

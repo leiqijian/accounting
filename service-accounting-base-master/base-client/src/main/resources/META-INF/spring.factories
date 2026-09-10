@@ -1,0 +1,6 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.liquido.base.feign.QueryDictValueDecoder,\
+com.liquido.base.feign.QueryDictAllValueDecoder,\
+com.liquido.base.cache.DictValueKeyGenerator,\
+com.liquido.base.feign.QueryDictValueAspect,\
+com.liquido.base.feign.QueryDictAllValueAspect

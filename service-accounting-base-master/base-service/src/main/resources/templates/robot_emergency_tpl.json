@@ -1,0 +1,47 @@
+{
+  "header": {
+    "template": "${headerColour}",
+    "title": {
+      "content": "${title}",
+      "tag": "plain_text"
+    }
+  },
+  "config": {
+    "wide_screen_mode": true
+  },
+  "elements": [
+    {
+      "fields": [
+        {
+          "is_short": true,
+          "text": {
+            "content": "**📋 Service: **\nBase Service",
+            "tag": "lark_md"
+          }
+        },
+        {
+          "is_short": true,
+          "text": {
+            "content": "**🕐 Now(UTC): **\n${timeNow}",
+            "tag": "lark_md"
+          }
+        }
+      ],
+      "tag": "div"
+    },
+    {
+      "tag": "hr"
+    },
+    {
+      "tag": "markdown",
+      "content": "${content}\n<at id=all></at>"
+    },
+    {
+      "tag": "hr"
+    },
+    {
+      "tag": "markdown",
+      "content": "Remark:\n${remark}"
+    }
+  ]
+}

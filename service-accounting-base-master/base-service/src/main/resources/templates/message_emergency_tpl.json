@@ -1,0 +1,40 @@
+{
+  "header": {
+    "template": "${headColor}",
+    "title": {
+      "content": "${title}",
+      "tag": "plain_text"
+    }
+  },
+  "config": {
+    "wide_screen_mode": true
+  },
+  "elements": [
+    {
+      "fields": [
+        {
+          "is_short": true,
+          "text": {
+            "content": "**🕐 Now(UTC):**  ${timeNow}",
+            "tag": "lark_md"
+          }
+        }
+      ],
+      "tag": "div"
+    },
+    {
+      "tag": "hr"
+    },
+    {
+      "tag": "markdown",
+      "content": "${content}"
+    },
+    {
+      "tag": "hr"
+    },
+    {
+      "tag": "markdown",
+      "content": "Remark:\n${remark}"
+    }
+  ]
+}

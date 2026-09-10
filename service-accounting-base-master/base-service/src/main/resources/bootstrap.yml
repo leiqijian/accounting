@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: service-accounting-base
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        username: accounting-svc
+        password: Accounting$Cfg@1016#Prod
+        server-addr: ${LIQUIDO_DISCOVER}
+        namespace: ${spring.profiles.active}
+      config:
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        namespace: ${spring.profiles.active}
+        username: accounting-svc
+        password: Accounting$Cfg@1016#Prod
+        shared-configs:
+          - data-id: service-accounting-share.yml
+            group: DEFAULT_GROUP
+            refresh: true
+    sentinel:
+      transport:
+        dashboard: ${LIQUIDO_SENTINEL}

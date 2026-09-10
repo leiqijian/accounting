@@ -1,0 +1,148 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+
+        maven {
+            url NEW_MAVEN_URL_RELEASES
+            credentials {
+                username = System.getenv("MAVEN_USERNAME") ?: ""
+                password = System.getenv("MAVEN_PASSWORD") ?: ""
+            }
+        }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.6.4"
+        classpath "io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:1.1.0"
+        classpath "com.bmuschko:gradle-docker-plugin:7.3.0"
+        classpath "com.liquido.plugins.parent:com.liquido.plugins.parent.gradle.plugin:0.0.36"
+
+    }
+}
+
+apply plugin: "com.bmuschko.docker-remote-api"
+apply plugin: "nebula.release"
+
+subprojects {
+    apply plugin: "java-library"
+    apply plugin: "maven-publish"
+    apply plugin: "io.spring.dependency-management"
+    apply plugin: "org.springframework.boot"
+    apply plugin: "com.liquido.plugins.parent"
+
+    sourceCompatibility = PROJECT_JDK
+    targetCompatibility = PROJECT_JDK
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        maven {
+            url NEW_MAVEN_URL_SNAPSHOTS
+            allowInsecureProtocol true
+            credentials {
+                username = System.getenv("MAVEN_USERNAME") ?: ""
+                password = System.getenv("MAVEN_PASSWORD") ?: ""
+            }
+        }
+
+        maven {
+            url NEW_MAVEN_URL_RELEASES
+            allowInsecureProtocol true
+            credentials {
+                username = System.getenv("MAVEN_USERNAME") ?: ""
+                password = System.getenv("MAVEN_PASSWORD") ?: ""
+            }
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "com.liquido:platform-bom:1.2.5-SNAPSHOT"
+        }
+    }
+
+    dependencies {
+        /* Core */
+        implementation "com.liquido:platform-core:1.2.5-SNAPSHOT"
+
+        /* Web */
+        implementation "org.springframework.boot:spring-boot-starter-web"
+
+        /* Web valid */
+        implementation "org.springframework.boot:spring-boot-starter-validation"
+        implementation "org.hibernate.validator:hibernate-validator"
+
+        /* Lombok */
+        compileOnly "org.projectlombok:lombok"
+        testCompileOnly "org.projectlombok:lombok"
+        annotationProcessor "org.projectlombok:lombok"
+        testAnnotationProcessor "org.projectlombok:lombok"
+
+        /* Common */
+        implementation "io.netty:netty-all"
+    }
+
+    publishing {
+        repositories {
+            maven {
+                url PROJECT_VERSION.endsWith("-SNAPSHOT") ? NEW_MAVEN_URL_SNAPSHOTS : NEW_MAVEN_URL_RELEASES
+                allowInsecureProtocol true
+                credentials {
+                    username = System.getenv("MAVEN_USERNAME") ?: ""
+                    password = System.getenv("MAVEN_PASSWORD") ?: ""
+                }
+            }
+        }
+
+        publishing {
+            publications {
+                maven(MavenPublication) {
+                    groupId = PROJECT_GROUP
+                    artifactId = PROJECT_ARTIFACT_ID
+                    version = PROJECT_VERSION
+                    artifact project.tasks.getByName(MAVEN_BUILD_TYPE)
+                }
+            }
+        }
+    }
+
+    // Clear the last compiled file
+    task clearPj(type: Delete) {
+        delete "build", "target"
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    tasks.withType(Javadoc) {
+        options.encoding = "UTF-8"
+    }
+
+}
+
+var serviceProject = rootProject.project("base-service")
+var clientProject = rootProject.project("base-client")
+
+task copyDockerFile(type: Copy) {
+    from("$rootProject.projectDir/Dockerfile")
+    into("$serviceProject.buildDir/libs")
+}
+
+task buildDocker(type: com.bmuschko.gradle.docker.tasks.image.DockerBuildImage, dependsOn: [
+        copyDockerFile,
+        serviceProject.tasks.getByName(serviceProject.MAVEN_BUILD_TYPE),
+        clientProject.tasks.getByName("publishMavenPublicationToMaven2Repository")
+]) {
+    def dockerNamespace = project.getProperties().getOrDefault("NAMESPACE", "")
+    dockerNamespace = dockerNamespace.toString().isEmpty() ? "" : dockerNamespace + "/"
+    def dockerName = project.hasProperty("NAME") ? project.getProperties().get("NAME") : project.name
+    def dockerVersion = project.hasProperty("VERSION") ? project.getProperties().get("VERSION") : serviceProject.PROJECT_VERSION
+    def awsAccountId = project.hasProperty("AWS_ACCOUNT_ID") ? project.getProperties().get("AWS_ACCOUNT_ID") : ""
+    def awsRegion = project.hasProperty("AWS_REGION") ? project.getProperties().get("AWS_REGION") : ""
+    inputDir = file("$serviceProject.buildDir/libs")
+    images.add("$dockerNamespace$dockerName:$dockerVersion")
+    buildArgs.putAll(Map.of("JAR_FILE", String.format("$serviceProject.PROJECT_ARTIFACT_ID-$serviceProject.PROJECT_VERSION%s", ".jar"),
+            "AWS_ACCOUNT_ID", awsAccountId, "AWS_REGION", awsRegion))
+}

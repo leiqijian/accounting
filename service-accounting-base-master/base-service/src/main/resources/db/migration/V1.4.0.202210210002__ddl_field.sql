@@ -1,0 +1,2 @@
+ALTER TABLE `service_accounting_base`.`payment_config`
+    ADD COLUMN `delay_execution` int UNSIGNED NULL DEFAULT 14400 COMMENT 'delay execution; unit: second, 0:non-delay; default:delay 4 hour' AFTER `operation_method`;

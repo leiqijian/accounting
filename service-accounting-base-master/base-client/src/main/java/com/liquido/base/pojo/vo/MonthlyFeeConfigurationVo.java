@@ -1,0 +1,147 @@
+package com.liquido.base.pojo.vo;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import javax.persistence.Convert;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import com.liquido.base.convert.ListToCurrencyConvert;
+import com.liquido.base.enums.CurrencyEnum;
+import com.liquido.base.enums.DirectionTypeEnum;
+import com.liquido.base.enums.FeeCodeEnum;
+import com.liquido.base.enums.FeeGroupEnum;
+import com.liquido.base.enums.FeeOnEnum;
+import com.liquido.base.enums.FeeTypeCodeEnum;
+import com.liquido.base.enums.FeeValueModelEnum;
+import com.liquido.base.enums.ProductCodeEnum;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@SuppressWarnings("PMD.TooManyFields")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MonthlyFeeConfigurationVo implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+
+    /**
+     * snowflake id
+     */
+    private Long id;
+
+    @NotNull
+    private Long accountId;
+
+    /**
+     * fk
+     */
+    @NotNull
+    private Long accountProductId;
+
+    @NotNull
+    private Long accountFeeConfigurationId;
+
+    /**
+     * ProductCodeEnum: SPEI/TED/PIX/CREDIT_CARD/ELO_CREDIT_CARD/BOLETO/OXXO/GIFTCARD/TOPUP/UTILITY
+     */
+    @NotNull
+    @Convert(converter = ProductCodeEnum.Convert.class)
+    private ProductCodeEnum productCode;
+
+    /**
+     * Map keys: cardType, cardBrand, cardRegion, cardUse3ds, cardInstallments
+     */
+    private Map<String, String> calculationRule;
+
+
+    @NotBlank
+    private String feeName;
+
+    @NotNull
+    @Convert(converter = FeeCodeEnum.Convert.class)
+    private FeeCodeEnum feeCode;
+
+    /**
+     * FeeTypeCodeEnum: TRANSACTION_FEE/FX/TAX/REFUND_FEE/CHARGE_BACK_FEE/WITHDRAW_FEE
+     */
+    @NotNull
+    @Convert(converter = FeeTypeCodeEnum.Convert.class)
+    private FeeTypeCodeEnum feeTypeCode;
+
+    /**
+     * Since for Report classification summary statistics
+     */
+    @NotNull
+    @Convert(converter = FeeGroupEnum.Convert.class)
+    private FeeGroupEnum feeGroup;
+
+    /**
+     * eg. 202204
+     */
+    @NotNull
+    private Integer activeMonth;
+
+    /**
+     * Min volume(Limit single transaction amount)
+     */
+    private BigDecimal minVolume;
+
+    /**
+     * Max volume(Limit single transaction amount)
+     */
+    private BigDecimal maxVolume;
+
+    /**
+     * FeeValueModelEnum: fixed -0/percent -1
+     */
+    @NotNull
+    @Convert(converter = FeeValueModelEnum.Convert.class)
+    private FeeValueModelEnum feeValueModel;
+
+    @NotNull
+    private BigDecimal feeValue;
+
+    @NotNull
+    @Convert(converter = CurrencyEnum.Convert.class)
+    private CurrencyEnum accountCurrency;
+
+    @NotNull
+    @Convert(converter = ListToCurrencyConvert.class)
+    private List<CurrencyEnum> sourceCurrency;
+
+    private BigDecimal minFeeAmount;
+
+    private BigDecimal maxFeeAmount;
+
+    /**
+     * FeeOnEnum: AMOUNT/SETTLE_AMOUNT
+     */
+    @NotNull
+    @Convert(converter = FeeOnEnum.Convert.class)
+    private FeeOnEnum feeOn;
+
+    /**
+     * DirectionTypeEnum: SETTLED/REFUND/CHARGE_BACK
+     */
+    @NotNull
+    @Convert(converter = DirectionTypeEnum.Convert.class)
+    private DirectionTypeEnum directionType;
+
+    /**
+     * 0-non-instant，1-instant
+     */
+    private Boolean instantFlag;
+
+    private Integer version;
+
+    private String remark;
+
+}
