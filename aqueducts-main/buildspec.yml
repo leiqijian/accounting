@@ -1,0 +1,47 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Entered the pre-build phase ..."
+  build:
+    commands:
+      - echo "Entered the build phase ..."
+      - ./gradlew clean build --build-cache --stacktrace
+  post_build:
+    commands:
+      - echo "Entered the post-build phase ..."
+      - mv ./build/libs/aqueducts-0.0.1-SNAPSHOT.jar ./aqueducts.jar
+      - export TODAY=$(date +'%Y.%m.%d')
+      - echo "Build completed on `date`"
+      - export VERSION_SUFFIX=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-8)
+      - echo "Version suffix set to $VERSION_SUFFIX"
+      - export ARTIFACT_PATH=RELEASE/Aqueducts/$TODAY-$VERSION_SUFFIX
+      - echo "Artifact path set to $ARTIFACT_PATH"
+
+artifacts:
+  files:
+    - ./aqueducts.jar
+  secondary-artifacts:
+    jarS3Artifact:
+      files:
+        - aqueducts.jar
+      discard-paths: yes
+      name: ${ARTIFACT_PATH}
+    zipS3Artifact:
+      files:
+        - aqueducts.jar
+        - .platform/hooks/postdeploy/101_cloudwatch_metrics.sh
+      discard-paths: yes
+      name: ${ARTIFACT_PATH}/application.zip
+    currentS3Artifact:
+      files:
+        - aqueducts.jar
+        - .platform/hooks/postdeploy/101_cloudwatch_metrics.sh
+      discard-paths: yes
+      name: RELEASE/Aqueducts/0.0.1-SNAPSHOT/application.zip
+
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
+    - '/root/.gradle/wrapper/**/*'
