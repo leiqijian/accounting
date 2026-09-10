@@ -1,0 +1,61 @@
+server:
+  servlet:
+    context-path: /v1/data-center
+  port: 5000
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://read_only:ZKlJNwpnOo#&8#@prod-data-infra-docdb-cluster.cluster-clzgszuzqc0k.ap-southeast-1.docdb.amazonaws.com:27017/data-infra-pipeline?replicaSet=rs0&readPreference=secondaryPreferred
+
+source-config:
+  payin:
+    normal:
+      ignore: false
+      collection: payment
+      db: virgo
+      tablePrefix: payment
+      uniqueId: after.idempotency_key
+      productType: after.payment_method
+    backup:
+      ignore: false
+      collection: payin
+      db: virgo
+      tablePrefix: pay_in_
+      uniqueId: after.idempotency_key
+      productType: after.payment_method
+  payout:
+    normal:
+      ignore: false
+      collection: payout
+      db: liquido_transfer
+      tablePrefix: payout_
+      uniqueId: after.idempotency_key
+      productType: after.payment_type
+  marketplace:
+    normal:
+      ignore: false
+      collection: marketplace
+      db: sales
+      tablePrefix: orders_
+      uniqueId: after.idempotency_key
+      productType: after.category
+  sub-account:
+    normal:
+      ignore: false
+      collection: payment
+      db: liquido
+      tablePrefix: sub_account_payback_
+      uniqueId: after.transaction_id
+      productType: after.description
+    backup:
+      ignore: false
+      collection: payin
+      db: liquido
+      tablePrefix: sub_account_payback_
+      uniqueId: after.transaction_id
+      productType: after.description
+
+scheme-config:
+  db:
+    payout: payout
